@@ -1,0 +1,27 @@
+# Archivos a ignorar por ESLint
+
+# Archivos de configuración
+eslint.config.mjs
+
+# Scripts de setup
+setup-firebase.js
+
+# Archivos compilados
+dist/
+build/
+*.d.ts
+
+# Node modules
+node_modules/
+
+# Archivos de test
+coverage/
+
+# Archivos de entorno
+.env
+.env.local
+.env.production
+
+# Archivos de credenciales
+credentials/
+*.json
