@@ -81,18 +81,28 @@ export class CountriesService {
   }
 
   // Método adicional para buscar países por región
-  async findByRegion(region: string) {
+  async findByContinent(continent: string) {
     try {
+      // Validar que se proporcione el continente
+      if (!continent) {
+        throw new Error('Please provide the continent name');
+      }
+
+      // ✅ Usar 'array-contains' para buscar en arrays
       const countries = await this.firestoreService.findAll(this.collection, [
-        { field: 'region', operator: '==', value: region },
+        { field: 'continents', operator: 'array-contains', value: continent },
       ]);
+
       return {
-        message: `Countries in ${region} retrieved successfully`,
+        message: `Countries containing continent "${continent}" retrieved successfully`,
         data: countries,
         count: countries.length,
+        searchedContinent: continent,
       };
     } catch (error) {
-      throw new Error(`Failed to fetch countries by region: ${error.message}`);
+      throw new Error(
+        `Failed to fetch countries by continent: ${error.message}`,
+      );
     }
   }
 }

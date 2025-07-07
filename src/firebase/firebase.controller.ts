@@ -44,7 +44,7 @@ export class FirebaseController {
         status: 'connected',
       };
 
-      await this.firestoreService.create('test', testData, 'connection-test');
+      await this.firestoreService.create('test', testData);
 
       return {
         success: true,

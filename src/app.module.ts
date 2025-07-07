@@ -6,6 +6,8 @@ import { ConfigController } from './controllers/config.controller';
 import { DatabaseService } from './services/database.service';
 import { CountriesModule } from './countries/countries.module';
 import { FirebaseModule } from './firebase/firebase.module';
+import { TopicsModule } from './topics/topics.module';
+import { PrayerRequestsModule } from './prayer-requests/prayer-requests.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { FirebaseModule } from './firebase/firebase.module';
     }),
     FirebaseModule,
     CountriesModule,
+    TopicsModule,
+    PrayerRequestsModule,
   ],
   controllers: [ConfigController],
   providers: [DatabaseService],

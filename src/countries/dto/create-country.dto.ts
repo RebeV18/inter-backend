@@ -1,7 +1,27 @@
-import { IsString, IsNumber, IsOptional, IsArray } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsString,
+  IsNumber,
+  IsArray,
+  IsOptional,
+  Min,
+  Max,
+  IsUrl,
+  MinLength,
+  MaxLength,
+  IsPositive,
+} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCountryDto {
+  @ApiProperty({
+    description: 'ID personalizado del país',
+    example: 152,
+    minimum: 1,
+  })
+  @IsNumber()
+  @IsPositive()
+  id: number;
+
   @ApiProperty({
     description: 'Nombre del país',
     example: 'Chile',
@@ -9,100 +29,140 @@ export class CreateCountryDto {
     maxLength: 100,
   })
   @IsString()
+  @MinLength(2)
+  @MaxLength(100)
   name: string;
 
   @ApiProperty({
-    description: 'Código ISO del país (2-3 caracteres)',
-    example: 'CL',
-    minLength: 2,
-    maxLength: 3,
+    description: 'Continentes del país',
+    type: [String],
+    example: ['South America'],
+    isArray: true,
   })
-  @IsString()
-  code: string; // Código ISO del país (ej: "US", "CL", "AR")
+  @IsArray()
+  @IsString({ each: true })
+  continents: string[];
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Capital del país',
+    required: false,
     example: 'Santiago',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(100)
   capital?: string;
 
-  @ApiPropertyOptional({
-    description: 'Región geográfica del país',
-    example: 'South America',
-    enum: [
-      'Africa',
-      'Asia',
-      'Europe',
-      'North America',
-      'South America',
-      'Oceania',
-    ],
-  })
-  @IsString()
-  @IsOptional()
-  region?: string; // Ej: "South America", "North America", "Europe"
-
-  @ApiPropertyOptional({
-    description: 'Subregión específica',
-    example: 'South America',
-  })
-  @IsString()
-  @IsOptional()
-  subregion?: string; // Ej: "Western Europe", "Northern America"
-
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Población del país',
+    required: false,
     example: 19116201,
     minimum: 0,
   })
-  @IsNumber()
   @IsOptional()
+  @IsNumber()
+  @Min(0)
   population?: number;
 
-  @ApiPropertyOptional({
-    description: 'Área del país en kilómetros cuadrados',
-    example: 756096,
-    minimum: 0,
+  @ApiProperty({
+    description: 'URLs de las banderas del país',
+    type: [String],
+    required: false,
+    example: ['https://flagcdn.com/cl.svg'],
+    isArray: true,
+  })
+  @IsOptional()
+  @IsArray()
+  @IsUrl({}, { each: true })
+  flags?: string[];
+
+  @ApiProperty({
+    description: 'URL del escudo de armas',
+    required: false,
+    example: 'https://example.com/chile-coat.png',
+  })
+  @IsOptional()
+  @IsString()
+  @IsUrl()
+  coat_of_arms?: string;
+
+  @ApiProperty({
+    description: 'Tipo de gobierno',
+    example: 'Presidential Republic',
+  })
+  @IsString()
+  @MinLength(1)
+  @MaxLength(100)
+  government: string;
+
+  @ApiProperty({
+    description: 'Descripción de colinas/relieve',
+    example: 'Andes Mountains, Coastal Range',
+  })
+  @IsString()
+  @MinLength(1)
+  hills: string;
+
+  @ApiProperty({
+    description: 'División geográfica administrativa',
+    example: '16 regions, 56 provinces, 346 communes',
+  })
+  @IsString()
+  @MinLength(1)
+  geographical_division: string;
+
+  @ApiProperty({
+    description: 'Latitud del país (-90 a 90)',
+    minimum: -90,
+    maximum: 90,
+    example: -33.4489,
   })
   @IsNumber()
-  @IsOptional()
-  area?: number; // Área en km²
+  @Min(-90)
+  @Max(90)
+  latitude: number;
 
-  @ApiPropertyOptional({
-    description: 'Idiomas oficiales del país',
-    example: ['Spanish'],
-    isArray: true,
-    type: String,
+  @ApiProperty({
+    description: 'Longitud del país (-180 a 180)',
+    minimum: -180,
+    maximum: 180,
+    example: -70.6693,
   })
-  @IsArray()
-  @IsOptional()
-  languages?: string[]; // Idiomas hablados
+  @IsNumber()
+  @Min(-180)
+  @Max(180)
+  longitude: number;
 
-  @ApiPropertyOptional({
-    description: 'Monedas oficiales del país',
-    example: ['CLP'],
-    isArray: true,
-    type: String,
-  })
-  @IsArray()
-  @IsOptional()
-  currencies?: string[]; // Monedas
-
-  @ApiPropertyOptional({
-    description: 'URL de la imagen de la bandera',
-    example: 'https://flagcdn.com/cl.svg',
+  @ApiProperty({
+    description: 'URL del mapa físico',
+    example: 'https://example.com/chile-physical-map.jpg',
   })
   @IsString()
-  @IsOptional()
-  flag?: string; // URL de la bandera
+  @IsUrl()
+  physical_map: string;
 
-  @ApiPropertyOptional({
-    description: 'Zona horaria principal del país',
-    example: 'UTC-3',
+  @ApiProperty({
+    description: 'URL del mapa político',
+    example: 'https://example.com/chile-political-map.jpg',
   })
   @IsString()
-  @IsOptional()
-  timezone?: string; // Zona horaria principal
+  @IsUrl()
+  political_map: string;
+
+  @ApiProperty({
+    description: 'Principales ciudades del país',
+    example: 'Santiago, Valparaíso, Concepción, La Serena, Antofagasta',
+  })
+  @IsString()
+  @MinLength(1)
+  principal_cities: string;
+
+  @ApiProperty({
+    description: 'Principales religiones del país',
+    example: 'Roman Catholicism (66%), Protestantism (16%), No religion (12%)',
+  })
+  @IsString()
+  @MinLength(1)
+  religions: string;
 }

@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Query,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -15,7 +14,6 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
-  ApiQuery,
   ApiBody,
 } from '@nestjs/swagger';
 import { CountriesService } from './countries.service';
@@ -35,17 +33,24 @@ export class CountriesController {
     description: 'País creado exitosamente',
     schema: {
       example: {
-        message: 'Country created successfully',
-        data: {
-          id: 'abc123',
-          name: 'Chile',
-          code: 'CL',
-          capital: 'Santiago',
-          region: 'South America',
-          population: 19116201,
-          createdAt: '2025-01-06T10:30:00.000Z',
-          updatedAt: '2025-01-06T10:30:00.000Z',
-        },
+        id: 'abc123',
+        custID: 152,
+        name: 'Chile',
+        continents: ['South America'],
+        capital: 'Santiago',
+        population: 19116201,
+        flags: ['https://flagcdn.com/cl.svg'],
+        coat_of_arms: 'https://example.com/chile-coat.png',
+        government: 'Presidential Republic',
+        hills: 'Andes Mountains',
+        geographical_division: '16 regions',
+        geopoint: { latitude: -33.4489, longitude: -70.6693 },
+        physical_map: 'https://example.com/chile-physical.jpg',
+        political_map: 'https://example.com/chile-political.jpg',
+        principal_cities: 'Santiago, Valparaíso, Concepción',
+        religions: 'Roman Catholicism, Protestantism',
+        createdAt: '2025-01-06T10:30:00.000Z',
+        updatedAt: '2025-01-06T10:30:00.000Z',
       },
     },
   })
@@ -56,13 +61,7 @@ export class CountriesController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Obtener todos los países o filtrar por región' })
-  @ApiQuery({
-    name: 'region',
-    required: false,
-    description: 'Filtrar países por región (ej: South America)',
-    example: 'South America',
-  })
+  @ApiOperation({ summary: 'Obtener todos los países' })
   @ApiResponse({
     status: 200,
     description: 'Lista de países obtenida exitosamente',
@@ -72,21 +71,58 @@ export class CountriesController {
         data: [
           {
             id: 'abc123',
+            custID: 152,
             name: 'Chile',
-            code: 'CL',
+            continents: ['South America'],
             capital: 'Santiago',
-            region: 'South America',
+            population: 19116201,
           },
         ],
         count: 1,
       },
     },
   })
-  findAll(@Query('region') region?: string) {
-    if (region) {
-      return this.countriesService.findByRegion(region);
-    }
+  findAll() {
     return this.countriesService.findAll();
+  }
+
+  // ✅ MÉTODO MOVIDO DENTRO DE LA CLASE Y ANTES DE :id
+  @Get('continent/:continent')
+  @ApiOperation({ summary: 'Buscar países por continente' })
+  @ApiParam({
+    name: 'continent',
+    description: 'Nombre del continente',
+    example: 'Europe',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Países por continente obtenidos exitosamente',
+    schema: {
+      example: {
+        message:
+          'Countries containing continent "Europe" retrieved successfully',
+        data: [
+          {
+            id: 'france123',
+            custID: 250,
+            name: 'France',
+            continents: ['Europe'],
+            capital: 'Paris',
+            government: 'Semi-presidential Republic',
+          },
+        ],
+        count: 1,
+        searchedContinent: 'Europe',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No se encontraron países para el continente especificado',
+  })
+  @ApiResponse({ status: 400, description: 'Continente no proporcionado' })
+  findByContinent(@Param('continent') continent: string) {
+    return this.countriesService.findByContinent(continent);
   }
 
   @Get(':id')
@@ -101,14 +137,22 @@ export class CountriesController {
     description: 'País encontrado',
     schema: {
       example: {
-        message: 'Country retrieved successfully',
-        data: {
-          id: 'abc123',
-          name: 'Chile',
-          code: 'CL',
-          capital: 'Santiago',
-          region: 'South America',
-        },
+        id: 'abc123',
+        custID: 152,
+        name: 'Chile',
+        continents: ['South America'],
+        capital: 'Santiago',
+        population: 19116201,
+        flags: ['https://flagcdn.com/cl.svg'],
+        coat_of_arms: 'https://example.com/chile-coat.png',
+        government: 'Presidential Republic',
+        hills: 'Andes Mountains',
+        geographical_division: '16 regions',
+        geopoint: { latitude: -33.4489, longitude: -70.6693 },
+        physical_map: 'https://example.com/chile-physical.jpg',
+        political_map: 'https://example.com/chile-political.jpg',
+        principal_cities: 'Santiago, Valparaíso, Concepción',
+        religions: 'Roman Catholicism, Protestantism',
       },
     },
   })
@@ -126,15 +170,14 @@ export class CountriesController {
     description: 'País actualizado exitosamente',
     schema: {
       example: {
-        message: 'Country updated successfully',
-        data: {
-          id: 'abc123',
-          name: 'Chile Updated',
-          code: 'CL',
-          capital: 'Santiago',
-          region: 'South America',
-          updatedAt: '2025-01-06T11:30:00.000Z',
-        },
+        id: 'abc123',
+        custID: 152,
+        name: 'Chile Updated',
+        continents: ['South America'],
+        capital: 'Santiago',
+        population: 19500000,
+        government: 'Presidential Republic',
+        updatedAt: '2025-01-06T11:30:00.000Z',
       },
     },
   })

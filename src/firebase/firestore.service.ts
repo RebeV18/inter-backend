@@ -1,113 +1,194 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Firestore } from 'firebase-admin/firestore';
+import { ConfigService } from '@nestjs/config';
+import * as admin from 'firebase-admin';
+
+interface FirestoreFilter {
+  field: string;
+  operator: FirebaseFirestore.WhereFilterOp;
+  value: any;
+}
 
 @Injectable()
 export class FirestoreService {
-  constructor(@Inject('FIRESTORE') private readonly firestore: Firestore) {}
+  private readonly db: FirebaseFirestore.Firestore;
 
-  // Crear un documento
-  async create(collection: string, data: any, id?: string) {
+  constructor(
+    @Inject('FIREBASE_APP') private firebaseApp: admin.app.App,
+    private configService: ConfigService,
+  ) {
+    this.db = this.firebaseApp.firestore();
+  }
+
+  async create(collection: string, data: any) {
     try {
-      if (id) {
-        await this.firestore
-          .collection(collection)
-          .doc(id)
-          .set({
-            ...data,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          });
-        return { id, ...data };
-      } else {
-        const docRef = await this.firestore.collection(collection).add({
-          ...data,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        });
-        return { id: docRef.id, ...data };
-      }
+      const docRef = await this.db.collection(collection).add({
+        ...data,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      const doc = await docRef.get();
+      return {
+        id: doc.id,
+        ...doc.data(),
+      };
     } catch (error) {
       throw new Error(`Error creating document: ${error.message}`);
     }
   }
 
-  // Obtener todos los documentos de una colección
-  async findAll(
-    collection: string,
-    filters?: { field: string; operator: any; value: any }[],
-  ) {
+  async findAll(collection: string, filters: FirestoreFilter[] = []) {
     try {
-      let query = this.firestore.collection(collection);
+      let query: FirebaseFirestore.Query = this.db.collection(collection);
 
-      if (filters) {
-        filters.forEach((filter) => {
-          query = query.where(
-            filter.field,
-            filter.operator,
-            filter.value,
-          ) as any;
-        });
-      }
+      // Aplicar filtros si existen
+      filters.forEach((filter) => {
+        query = query.where(filter.field, filter.operator, filter.value);
+      });
 
       const snapshot = await query.get();
-      return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      return snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
     } catch (error) {
       throw new Error(`Error fetching documents: ${error.message}`);
     }
   }
 
-  // Obtener un documento por ID
   async findOne(collection: string, id: string) {
     try {
-      const doc = await this.firestore.collection(collection).doc(id).get();
+      const doc = await this.db.collection(collection).doc(id).get();
+
       if (!doc.exists) {
         return null;
       }
-      return { id: doc.id, ...doc.data() };
+
+      return {
+        id: doc.id,
+        ...doc.data(),
+      };
     } catch (error) {
       throw new Error(`Error fetching document: ${error.message}`);
     }
   }
 
-  // Actualizar un documento
   async update(collection: string, id: string, data: any) {
     try {
-      await this.firestore
-        .collection(collection)
-        .doc(id)
-        .update({
-          ...data,
-          updatedAt: new Date(),
-        });
-      return this.findOne(collection, id);
+      const docRef = this.db.collection(collection).doc(id);
+      const doc = await docRef.get();
+
+      if (!doc.exists) {
+        throw new Error('Document not found');
+      }
+
+      await docRef.update({
+        ...data,
+        updatedAt: new Date(),
+      });
+
+      const updatedDoc = await docRef.get();
+      return {
+        id: updatedDoc.id,
+        ...updatedDoc.data(),
+      };
     } catch (error) {
       throw new Error(`Error updating document: ${error.message}`);
     }
   }
 
-  // Eliminar un documento
   async remove(collection: string, id: string) {
     try {
-      await this.firestore.collection(collection).doc(id).delete();
-      return { deleted: true, id };
+      const docRef = this.db.collection(collection).doc(id);
+      const doc = await docRef.get();
+
+      if (!doc.exists) {
+        throw new Error('Document not found');
+      }
+
+      await docRef.delete();
+      return { id, deleted: true };
     } catch (error) {
       throw new Error(`Error deleting document: ${error.message}`);
     }
   }
 
-  // Método para ejecutar consultas personalizadas
-  async query(collection: string, queryFn: (query: any) => any) {
+  async findWithQuery(
+    collection: string,
+    queryBuilder: (query: FirebaseFirestore.Query) => FirebaseFirestore.Query,
+  ) {
     try {
-      const query = queryFn(this.firestore.collection(collection));
+      const baseQuery = this.db.collection(collection);
+      const query = queryBuilder(baseQuery);
       const snapshot = await query.get();
-      return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      return snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
     } catch (error) {
       throw new Error(`Error executing query: ${error.message}`);
     }
   }
 
-  // Método para transacciones
-  async runTransaction(updateFunction: (transaction: any) => Promise<any>) {
-    return this.firestore.runTransaction(updateFunction);
+  // Método para verificar la conexión
+  async testConnection(): Promise<boolean> {
+    try {
+      // Intentar hacer una consulta simple
+      await this.db.collection('_health').limit(1).get();
+      return true;
+    } catch (error) {
+      console.error('Firebase connection test failed:', error);
+      return false;
+    }
+  }
+
+  async updateArrayField(
+    collection: string,
+    id: string,
+    fieldPath: string,
+    operation: 'add' | 'remove' | 'update',
+    value: any,
+    index?: number,
+  ) {
+    try {
+      const docRef = this.db.collection(collection).doc(id);
+      const doc = await docRef.get();
+
+      if (!doc.exists) {
+        throw new Error('Document not found');
+      }
+
+      const data = doc.data();
+      const currentArray = data?.[fieldPath] || [];
+
+      let newArray;
+      switch (operation) {
+        case 'add':
+          newArray = [...currentArray, value];
+          break;
+        case 'remove':
+          newArray = currentArray.filter((item: any, i: number) => i !== index);
+          break;
+        case 'update':
+          if (index === undefined) {
+            throw new Error('Index required for update operation');
+          }
+          newArray = [...currentArray];
+          newArray[index] = value;
+          break;
+        default:
+          throw new Error('Invalid operation');
+      }
+
+      await docRef.update({
+        [fieldPath]: newArray,
+        updatedAt: new Date(),
+      });
+
+      return newArray;
+    } catch (error) {
+      throw new Error(`Error updating array field: ${error.message}`);
+    }
   }
 }
