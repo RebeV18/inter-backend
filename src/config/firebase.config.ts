@@ -22,6 +22,29 @@ let firebaseApp: admin.app.App;
 export const initializeFirebase = () => {
   if (!firebaseApp) {
     try {
+      // Validar variables de entorno requeridas
+      const requiredEnvVars = [
+        'FIREBASE_PROJECT_ID',
+        'FIREBASE_PRIVATE_KEY_ID',
+        'FIREBASE_PRIVATE_KEY',
+        'FIREBASE_CLIENT_EMAIL',
+        'FIREBASE_CLIENT_ID',
+      ];
+
+      const missingVars = requiredEnvVars.filter(
+        (varName) => !process.env[varName],
+      );
+
+      if (missingVars.length > 0) {
+        throw new Error(
+          `Missing required Firebase environment variables: ${missingVars.join(', ')}`,
+        );
+      }
+
+      console.log('🔧 Firebase environment variables loaded:');
+      console.log(`  • PROJECT_ID: ${process.env.FIREBASE_PROJECT_ID}`);
+      console.log(`  • CLIENT_EMAIL: ${process.env.FIREBASE_CLIENT_EMAIL}`);
+
       const serviceAccount = {
         type: 'service_account',
         project_id: process.env.FIREBASE_PROJECT_ID,
@@ -39,6 +62,13 @@ export const initializeFirebase = () => {
           'https://www.googleapis.com/oauth2/v1/certs',
         client_x509_cert_url: process.env.FIREBASE_CLIENT_CERT_URL,
       };
+
+      // Validar que project_id esté presente
+      if (!serviceAccount.project_id) {
+        throw new Error(
+          'Service account object must contain a string "project_id" property.',
+        );
+      }
 
       firebaseApp = admin.initializeApp({
         credential: admin.credential.cert(

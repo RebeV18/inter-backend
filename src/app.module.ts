@@ -1,3 +1,7 @@
+// Cargar variables de entorno antes de cualquier otra cosa
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { validate } from './config/environment.config';
