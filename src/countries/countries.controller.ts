@@ -34,7 +34,7 @@ export class CountriesController {
     schema: {
       example: {
         id: 'abc123',
-        custID: 152,
+        custID: 1,
         name: 'Chile',
         continents: ['South America'],
         capital: 'Santiago',
