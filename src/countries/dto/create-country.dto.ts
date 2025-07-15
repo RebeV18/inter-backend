@@ -92,28 +92,45 @@ export class CreateCountryDto {
   @IsString()
   principal_cities?: string;
 
-  @ApiProperty({ example: 'Andes Mountains', required: false })
-  @IsOptional()
-  @IsString()
-  hills?: string;
-
-  @ApiProperty({ example: 'Villarrica, Osorno', required: false })
-  @IsOptional()
-  @IsString()
-  volcanoes?: string;
-
   @ApiProperty({
-    example: 'Aeropuerto Internacional Arturo Merino Benítez',
+    type: [String],
+    example: ['Andes Mountains'],
     required: false,
   })
   @IsOptional()
-  @IsString()
-  doors?: string;
+  @IsArray()
+  @IsString({ each: true })
+  hills?: string[];
 
-  @ApiProperty({ example: 'Colchane', required: false })
+  @ApiProperty({
+    type: [String],
+    example: ['Villarrica', 'Osorno'],
+    required: false,
+  })
   @IsOptional()
-  @IsString()
-  dangerous_places?: string;
+  @IsArray()
+  @IsString({ each: true })
+  volcanoes?: string[];
+
+  @ApiProperty({
+    type: [String],
+    example: ['Aeropuerto Internacional Arturo Merino Benítez'],
+    required: false,
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  doors?: string[];
+
+  @ApiProperty({
+    type: [String],
+    example: ['Colchane'],
+    required: false,
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  dangerous_places?: string[];
 
   @ApiProperty({ example: 19116201, required: false })
   @IsOptional()

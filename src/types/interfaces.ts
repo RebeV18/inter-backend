@@ -24,10 +24,10 @@ export interface Country {
   government?: string;
   area?: number;
   principal_cities?: string;
-  hills?: string;
-  volcanoes?: string;
-  doors?: string;
-  dangerous_places?: string;
+  hills?: string[];
+  volcanoes?: string[];
+  doors?: string[];
+  dangerous_places?: string[];
   population?: string;
   religions?: string;
 }
