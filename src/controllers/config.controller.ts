@@ -9,6 +9,11 @@ export class ConfigController {
     private readonly databaseService: DatabaseService,
   ) {}
 
+@Get()
+getHello(): string {
+  return 'Backend NestJS corriendo en Fly.io!';
+}
+
   @Get('info')
   getConfigInfo() {
     return {
