@@ -18,7 +18,6 @@ export class ConfigController {
       databaseConfig: {
         host: this.configService.get<string>('DATABASE_HOST'),
         port: this.configService.get<number>('DATABASE_PORT'),
-        // No mostramos credenciales por seguridad
       },
     };
   }

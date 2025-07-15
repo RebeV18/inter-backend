@@ -1,5 +1,3 @@
-import { GeoPoint } from 'firebase-admin/firestore';
-
 export interface TopicElement {
   id: string;
   text: string;
@@ -14,21 +12,23 @@ export interface Topic {
 
 export interface Country {
   id: string;
-  custID: number;
   name: string;
   continents: string[];
-  capital?: string;
-  population?: number;
-  flags?: string[];
+  flags: string[];
   coat_of_arms?: string;
-  government: string;
-  hills: string;
+  capital: string;
+  geopoint: { latitude: number; longitude: number };
   geographical_division: string;
-  geopoint: GeoPoint;
-  physical_map: string;
-  political_map: string;
-  principal_cities: string;
-  religions: string;
+  physical_map?: string;
+  political_map?: string;
+  government?: string;
+  area?: number;
+  principal_cities?: string;
+  hills?: string;
+  doors?: string;
+  dangerous_places?: string;
+  population?: string;
+  religions?: string;
 }
 
 export interface PrayerRequest {

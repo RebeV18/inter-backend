@@ -3,166 +3,121 @@ import {
   IsNumber,
   IsArray,
   IsOptional,
-  Min,
-  Max,
   IsUrl,
-  MinLength,
-  MaxLength,
-  IsPositive,
+  ValidateNested,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+
+class GeopointDto {
+  @ApiProperty({ example: -33.4489 })
+  @IsNumber()
+  latitude: number;
+
+  @ApiProperty({ example: -70.6693 })
+  @IsNumber()
+  longitude: number;
+}
 
 export class CreateCountryDto {
-  @ApiProperty({
-    description: 'ID personalizado del país',
-    example: 152,
-    minimum: 1,
-  })
-  @IsNumber()
-  @IsPositive()
-  id: number;
-
-  @ApiProperty({
-    description: 'Nombre del país',
-    example: 'Chile',
-    minLength: 2,
-    maxLength: 100,
-  })
+  @ApiProperty({ example: 'abc123' })
   @IsString()
-  @MinLength(2)
-  @MaxLength(100)
+  id: string;
+
+  @ApiProperty({ example: 'Chile' })
+  @IsString()
   name: string;
 
-  @ApiProperty({
-    description: 'Continentes del país',
-    type: [String],
-    example: ['South America'],
-    isArray: true,
-  })
+  @ApiProperty({ type: [String], example: ['South America'] })
   @IsArray()
   @IsString({ each: true })
   continents: string[];
 
-  @ApiProperty({
-    description: 'Capital del país',
-    required: false,
-    example: 'Santiago',
-  })
-  @IsOptional()
-  @IsString()
-  @MinLength(1)
-  @MaxLength(100)
-  capital?: string;
-
-  @ApiProperty({
-    description: 'Población del país',
-    required: false,
-    example: 19116201,
-    minimum: 0,
-  })
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  population?: number;
-
-  @ApiProperty({
-    description: 'URLs de las banderas del país',
-    type: [String],
-    required: false,
-    example: ['https://flagcdn.com/cl.svg'],
-    isArray: true,
-  })
-  @IsOptional()
+  @ApiProperty({ type: [String], example: ['https://flagcdn.com/cl.svg'] })
   @IsArray()
   @IsUrl({}, { each: true })
-  flags?: string[];
+  flags: string[];
 
   @ApiProperty({
-    description: 'URL del escudo de armas',
-    required: false,
     example: 'https://example.com/chile-coat.png',
+    required: false,
   })
   @IsOptional()
   @IsString()
   @IsUrl()
   coat_of_arms?: string;
 
-  @ApiProperty({
-    description: 'Tipo de gobierno',
-    example: 'Presidential Republic',
-  })
+  @ApiProperty({ example: 'Santiago' })
   @IsString()
-  @MinLength(1)
-  @MaxLength(100)
-  government: string;
+  capital: string;
 
-  @ApiProperty({
-    description: 'Descripción de colinas/relieve',
-    example: 'Andes Mountains, Coastal Range',
-  })
-  @IsString()
-  @MinLength(1)
-  hills: string;
+  @ApiProperty({ type: GeopointDto })
+  @ValidateNested()
+  @Type(() => GeopointDto)
+  geopoint: GeopointDto;
 
-  @ApiProperty({
-    description: 'División geográfica administrativa',
-    example: '16 regions, 56 provinces, 346 communes',
-  })
+  @ApiProperty({ example: '16 regions' })
   @IsString()
-  @MinLength(1)
   geographical_division: string;
 
   @ApiProperty({
-    description: 'Latitud del país (-90 a 90)',
-    minimum: -90,
-    maximum: 90,
-    example: -33.4489,
+    example: 'https://example.com/chile-physical.jpg',
+    required: false,
   })
-  @IsNumber()
-  @Min(-90)
-  @Max(90)
-  latitude: number;
-
-  @ApiProperty({
-    description: 'Longitud del país (-180 a 180)',
-    minimum: -180,
-    maximum: 180,
-    example: -70.6693,
-  })
-  @IsNumber()
-  @Min(-180)
-  @Max(180)
-  longitude: number;
-
-  @ApiProperty({
-    description: 'URL del mapa físico',
-    example: 'https://example.com/chile-physical-map.jpg',
-  })
+  @IsOptional()
   @IsString()
   @IsUrl()
-  physical_map: string;
+  physical_map?: string;
 
   @ApiProperty({
-    description: 'URL del mapa político',
-    example: 'https://example.com/chile-political-map.jpg',
+    example: 'https://example.com/chile-political.jpg',
+    required: false,
   })
+  @IsOptional()
   @IsString()
   @IsUrl()
-  political_map: string;
+  political_map?: string;
+
+  @ApiProperty({ example: 'Presidential Republic', required: false })
+  @IsOptional()
+  @IsString()
+  government?: string;
+
+  @ApiProperty({ example: 7561024, required: false })
+  @IsOptional()
+  @IsNumber()
+  area?: number;
+
+  @ApiProperty({ example: 'Santiago, Valparaíso, Concepción', required: false })
+  @IsOptional()
+  @IsString()
+  principal_cities?: string;
+
+  @ApiProperty({ example: 'Andes Mountains', required: false })
+  @IsOptional()
+  @IsString()
+  hills?: string;
 
   @ApiProperty({
-    description: 'Principales ciudades del país',
-    example: 'Santiago, Valparaíso, Concepción, La Serena, Antofagasta',
+    example: 'Aeropuerto Internacional Arturo Merino Benítez',
+    required: false,
   })
+  @IsOptional()
   @IsString()
-  @MinLength(1)
-  principal_cities: string;
+  doors?: string;
 
-  @ApiProperty({
-    description: 'Principales religiones del país',
-    example: 'Roman Catholicism (66%), Protestantism (16%), No religion (12%)',
-  })
+  @ApiProperty({ example: 'Colchane', required: false })
+  @IsOptional()
   @IsString()
-  @MinLength(1)
-  religions: string;
+  dangerous_places?: string;
+
+  @ApiProperty({ example: 19116201, required: false })
+  @IsOptional()
+  @IsNumber()
+  population?: number;
+
+  @ApiProperty({ example: 'Roman Catholicism, Protestantism', required: false })
+  @IsOptional()
+  @IsString()
+  religions?: string;
 }
