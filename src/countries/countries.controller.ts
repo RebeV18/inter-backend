@@ -8,6 +8,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -81,8 +82,14 @@ export class CountriesController {
       },
     },
   })
-  findAll() {
-    return this.countriesService.findAll();
+  findAll(
+    @Query('limit') limit?: number,
+    @Query('startAfter') startAfter?: string,
+  ) {
+    return this.countriesService.findAll(
+      limit ? Number(limit) : 20,
+      startAfter,
+    );
   }
 
   // ✅ MÉTODO MOVIDO DENTRO DE LA CLASE Y ANTES DE :id

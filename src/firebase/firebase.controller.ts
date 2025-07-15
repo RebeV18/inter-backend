@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { FirestoreService } from '../firebase/firestore.service';
 
@@ -61,9 +61,18 @@ export class FirebaseController {
   }
 
   @Get('collections/:collection')
-  async getCollection(@Param('collection') collection: string) {
+  async getCollection(
+    @Param('collection') collection: string,
+    @Query('limit') limit?: number,
+    @Query('startAfter') startAfter?: string,
+  ) {
     try {
-      const documents = await this.firestoreService.findAll(collection);
+      const documents = await this.firestoreService.findAll(
+        collection,
+        [],
+        limit ? Number(limit) : 20,
+        startAfter,
+      );
       return {
         success: true,
         collection,

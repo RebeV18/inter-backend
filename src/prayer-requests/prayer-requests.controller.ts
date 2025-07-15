@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { PrayerRequestsService } from './prayer-requests.service';
 import { CreatePrayerRequestDto } from './dto/create-prayer-request.dto';
@@ -21,8 +22,14 @@ export class PrayerRequestsController {
   }
 
   @Get()
-  findAll() {
-    return this.prayerRequestsService.findAll();
+  findAll(
+    @Query('limit') limit?: number,
+    @Query('startAfter') startAfter?: string,
+  ) {
+    return this.prayerRequestsService.findAll(
+      limit ? Number(limit) : 20,
+      startAfter,
+    );
   }
 
   @Get(':id')

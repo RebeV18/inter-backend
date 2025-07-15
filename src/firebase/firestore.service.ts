@@ -37,14 +37,26 @@ export class FirestoreService {
     }
   }
 
-  async findAll(collection: string, filters: FirestoreFilter[] = []) {
+  async findAll(
+    collection: string,
+    filters: FirestoreFilter[] = [],
+    limit = 20,
+    startAfter?: string,
+  ) {
     try {
       let query: FirebaseFirestore.Query = this.db.collection(collection);
 
-      // Aplicar filtros si existen
       filters.forEach((filter) => {
         query = query.where(filter.field, filter.operator, filter.value);
       });
+
+      query = query.limit(limit);
+      if (startAfter) {
+        const doc = await this.db.collection(collection).doc(startAfter).get();
+        if (doc.exists) {
+          query = query.startAfter(doc);
+        }
+      }
 
       const snapshot = await query.get();
       return snapshot.docs.map((doc) => ({
@@ -162,31 +174,42 @@ export class FirestoreService {
       const data = doc.data();
       const currentArray = data?.[fieldPath] || [];
 
-      let newArray;
+      let result;
       switch (operation) {
         case 'add':
-          newArray = [...currentArray, value];
+          await docRef.update({
+            [fieldPath]: admin.firestore.FieldValue.arrayUnion(value),
+            updatedAt: new Date(),
+          });
+          result = [...currentArray, value];
           break;
         case 'remove':
-          newArray = currentArray.filter((item: any, i: number) => i !== index);
+          await docRef.update({
+            [fieldPath]: admin.firestore.FieldValue.arrayRemove(
+              currentArray[index],
+            ),
+            updatedAt: new Date(),
+          });
+          result = currentArray.filter((item: any, i: number) => i !== index);
           break;
-        case 'update':
+        case 'update': {
           if (index === undefined) {
             throw new Error('Index required for update operation');
           }
-          newArray = [...currentArray];
+          const newArray = [...currentArray];
           newArray[index] = value;
+          await docRef.update({
+            [fieldPath]: newArray,
+            updatedAt: new Date(),
+          });
+          result = newArray;
           break;
+        }
         default:
           throw new Error('Invalid operation');
       }
 
-      await docRef.update({
-        [fieldPath]: newArray,
-        updatedAt: new Date(),
-      });
-
-      return newArray;
+      return result;
     } catch (error) {
       throw new Error(`Error updating array field: ${error.message}`);
     }

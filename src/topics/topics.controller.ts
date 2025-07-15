@@ -8,6 +8,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { TopicsService } from './topics.service';
@@ -30,8 +31,11 @@ export class TopicsController {
 
   @Get()
   @ApiOperation({ summary: 'Obtener todos los topics' })
-  findAll() {
-    return this.topicsService.findAll();
+  findAll(
+    @Query('limit') limit?: number,
+    @Query('startAfter') startAfter?: string,
+  ) {
+    return this.topicsService.findAll(limit ? Number(limit) : 20, startAfter);
   }
 
   @Get(':id')

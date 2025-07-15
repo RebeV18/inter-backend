@@ -28,9 +28,14 @@ export class CountriesService {
     }
   }
 
-  async findAll() {
+  async findAll(limit = 20, startAfter?: string) {
     try {
-      const countries = await this.firestoreService.findAll(this.collection);
+      const countries = await this.firestoreService.findAll(
+        this.collection,
+        [],
+        limit,
+        startAfter,
+      );
       return {
         message: 'Countries retrieved successfully',
         data: countries,

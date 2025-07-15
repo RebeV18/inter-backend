@@ -32,8 +32,13 @@ export class TopicsService {
     return createdTopic as Topic;
   }
 
-  async findAll(): Promise<Topic[]> {
-    const topics = await this.firestoreService.findAll(this.collection);
+  async findAll(limit = 20, startAfter?: string): Promise<Topic[]> {
+    const topics = await this.firestoreService.findAll(
+      this.collection,
+      [],
+      limit,
+      startAfter,
+    );
     return topics as Topic[];
   }
 

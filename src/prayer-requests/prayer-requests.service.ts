@@ -1,15 +1,23 @@
 import { Injectable } from '@nestjs/common';
+import { FirestoreService } from '../firebase/firestore.service';
 import { CreatePrayerRequestDto } from './dto/create-prayer-request.dto';
 import { UpdatePrayerRequestDto } from './dto/update-prayer-request.dto';
 
 @Injectable()
 export class PrayerRequestsService {
+  constructor(private readonly firestoreService: FirestoreService) {}
+
   create(createPrayerRequestDto: CreatePrayerRequestDto) {
     return createPrayerRequestDto;
   }
 
-  findAll() {
-    return `This action returns all prayerRequests`;
+  findAll(limit = 20, startAfter?: string) {
+    return this.firestoreService.findAll(
+      'prayer-requests',
+      [],
+      limit,
+      startAfter,
+    );
   }
 
   findOne(id: number) {
