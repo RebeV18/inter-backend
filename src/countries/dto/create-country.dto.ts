@@ -13,7 +13,6 @@ class GeopointDto {
   @ApiProperty({ example: -33.4489 })
   @IsNumber()
   latitude: number;
-
   @ApiProperty({ example: -70.6693 })
   @IsNumber()
   longitude: number;
@@ -97,6 +96,11 @@ export class CreateCountryDto {
   @IsOptional()
   @IsString()
   hills?: string;
+
+  @ApiProperty({ example: 'Villarrica, Osorno', required: false })
+  @IsOptional()
+  @IsString()
+  volcanoes?: string;
 
   @ApiProperty({
     example: 'Aeropuerto Internacional Arturo Merino Benítez',

@@ -25,6 +25,7 @@ export interface Country {
   area?: number;
   principal_cities?: string;
   hills?: string;
+  volcanoes?: string;
   doors?: string;
   dangerous_places?: string;
   population?: string;
