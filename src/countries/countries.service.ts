@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateCountryDto } from './dto/create-country.dto';
 import { UpdateCountryDto } from './dto/update-country.dto';
 import { FirestoreService } from '../firebase/firestore.service';
@@ -41,14 +45,19 @@ export class CountriesService {
     try {
       const country = await this.firestoreService.findOne(this.collection, id);
       if (!country) {
-        throw new Error('Country not found');
+        throw new NotFoundException('Country not found');
       }
       return {
         message: 'Country retrieved successfully',
         data: country,
       };
     } catch (error) {
-      throw new Error(`Failed to fetch country: ${error.message}`);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        `Failed to fetch country: ${error.message}`,
+      );
     }
   }
 
