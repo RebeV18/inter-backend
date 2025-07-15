@@ -20,20 +20,22 @@ export class ConfigController {
       environment: this.configService.get<string>('NODE_ENV'),
       port: this.configService.get<number>('PORT'),
       isProduction: this.databaseService.isProduction(),
-      databaseConfig: {
-        host: this.configService.get<string>('DATABASE_HOST'),
-        port: this.configService.get<number>('DATABASE_PORT'),
+      database: this.databaseService.getDatabaseConfig(),
+      jwt: this.databaseService.getJwtConfig(),
+      api: this.databaseService.getApiConfig(),
+      redis: this.databaseService.getRedisConfig(),
+      firebase: {
+        projectId: this.configService.get<string>('FIREBASE_PROJECT_ID'),
+        clientEmail: this.configService.get<string>('FIREBASE_CLIENT_EMAIL'),
+        clientId: this.configService.get<string>('FIREBASE_CLIENT_ID'),
+        authUri: this.configService.get<string>('FIREBASE_AUTH_URI'),
+        tokenUri: this.configService.get<string>('FIREBASE_TOKEN_URI'),
+        clientCertUrl: this.configService.get<string>(
+          'FIREBASE_CLIENT_CERT_URL',
+        ),
       },
     };
   }
-
-  @Get('database')
-  getDatabaseConfig() {
-    // En un caso real, no deberías exponer estas credenciales
-    // Esto es solo para demostración
-    return this.databaseService.getDatabaseConfig();
-  }
-
   @Get('redis')
   getRedisConfig() {
     return this.databaseService.getRedisConfig();
