@@ -24,7 +24,8 @@ async function bootstrap() {
   app.enableCors();
 
   // Usar puerto desde variables de entorno (Vercel: process.env.PORT siempre presente)
-  const port = process.env.PORT || configService.get<number>('PORT') || 4000;
+  const port =
+    Number(process.env.PORT) || configService.get<number>('PORT') || 4000;
 
   // Configurar Swagger/OpenAPI
   const config = new DocumentBuilder()
@@ -60,7 +61,7 @@ async function bootstrap() {
 
   app.enableCors();
 
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   console.log(`🚀 Application is running on: http://localhost:${port}`);
   console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
   console.log(`🌍 Environment: ${configService.get<string>('NODE_ENV')}`);
