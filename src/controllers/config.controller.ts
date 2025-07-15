@@ -9,6 +9,11 @@ export class ConfigController {
     private readonly databaseService: DatabaseService,
   ) {}
 
+  @Get()
+  getHello(): string {
+    return 'Welcome to the backend!';
+  }
+
   @Get('info')
   getConfigInfo() {
     return {
