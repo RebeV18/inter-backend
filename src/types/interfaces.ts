@@ -32,6 +32,21 @@ export interface Country {
   religions?: string;
 }
 
+export interface Mission {
+  id: string;
+  country: string;
+  cities: City[];
+  map?: string;
+  post?: string;
+}
+
+export interface City {
+  order: number;
+  place: string;
+  map: string;
+  photo: string;
+}
+
 export interface PrayerRequest {
   id: string;
   requester?: string;

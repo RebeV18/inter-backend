@@ -21,6 +21,7 @@ import { CountriesModule } from './countries/countries.module';
 import { FirebaseModule } from './firebase/firebase.module';
 import { TopicsModule } from './topics/topics.module';
 import { PrayerRequestsModule } from './prayer-requests/prayer-requests.module';
+import { MissionsModule } from './missions/missions.module';
 
 @Catch()
 class FallbackNotFoundFilter implements ExceptionFilter {
@@ -60,6 +61,7 @@ class FallbackNotFoundFilter implements ExceptionFilter {
     CountriesModule,
     TopicsModule,
     PrayerRequestsModule,
+    MissionsModule,
   ],
   controllers: [ConfigController],
   providers: [
