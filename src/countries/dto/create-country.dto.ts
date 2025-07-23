@@ -9,20 +9,17 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
-class GeopointDto {
+export class GeopointDto {
   @ApiProperty({ example: -33.4489 })
   @IsNumber()
   latitude: number;
+
   @ApiProperty({ example: -70.6693 })
   @IsNumber()
   longitude: number;
 }
 
 export class CreateCountryDto {
-  @ApiProperty({ example: 'abc123' })
-  @IsString()
-  id: string;
-
   @ApiProperty({ example: 'Chile' })
   @IsString()
   name: string;
@@ -82,7 +79,12 @@ export class CreateCountryDto {
   @IsString()
   government?: string;
 
-  @ApiProperty({ example: 7561024, required: false })
+  @ApiProperty({ example: 'Principal industries', required: false })
+  @IsOptional()
+  @IsString()
+  economy?: string;
+
+  @ApiProperty({ example: '7561024', required: false })
   @IsOptional()
   @IsNumber()
   area?: number;
@@ -120,22 +122,12 @@ export class CreateCountryDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  doors?: string[];
+  entry_points?: string[];
 
-  @ApiProperty({
-    type: [String],
-    example: ['Colchane'],
-    required: false,
-  })
+  @ApiProperty({ example: '19116201 (Año)', required: false })
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  dangerous_places?: string[];
-
-  @ApiProperty({ example: 19116201, required: false })
-  @IsOptional()
-  @IsNumber()
-  population?: number;
+  @IsString()
+  population?: string;
 
   @ApiProperty({ example: 'Roman Catholicism, Protestantism', required: false })
   @IsOptional()

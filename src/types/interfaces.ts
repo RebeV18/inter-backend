@@ -11,7 +11,6 @@ export interface Topic {
 }
 
 export interface Country {
-  id: string;
   name: string;
   continents: string[];
   flags: string[];
@@ -26,8 +25,7 @@ export interface Country {
   principal_cities?: string;
   hills?: string[];
   volcanoes?: string[];
-  doors?: string[];
-  dangerous_places?: string[];
+  entry_points?: string[];
   population?: string;
   religions?: string;
 }
