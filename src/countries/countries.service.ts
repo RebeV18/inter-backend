@@ -19,10 +19,17 @@ export class CountriesService {
     createCountryDto: CreateCountryDto,
   ): Promise<{ message: string; data: Country }> {
     try {
-      const { id, ...data } = createCountryDto;
+      const { geopoint, ...rest } = createCountryDto;
+      const plainGeopoint = geopoint
+        ? { latitude: geopoint.latitude, longitude: geopoint.longitude }
+        : undefined;
+      const data = {
+        ...rest,
+        ...(plainGeopoint && { geopoint: plainGeopoint }),
+      };
       const countryDoc = await this.firestoreService.createWithId(
         this.collection,
-        String(id),
+        createCountryDto.id,
         data,
       );
       return {

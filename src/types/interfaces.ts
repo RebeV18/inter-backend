@@ -17,19 +17,19 @@ export interface Country {
   flags: string[];
   coat_of_arms?: string;
   capital: string;
-  geopoint: { latitude: number; longitude: number };
+  geopoint?: { latitude: number; longitude: number };
   geographical_division: string;
-  physical_map: string;
-  political_map: string;
-  government: string;
-  economy: string;
-  area: number;
-  principal_cities: string[];
-  hills: string[];
-  volcanoes: string[];
-  entry_points: string[];
-  population: string;
-  religions: string;
+  physical_map?: string;
+  political_map?: string;
+  government?: string;
+  economy?: string;
+  area?: number;
+  principal_cities?: string[];
+  hills?: string[];
+  volcanoes?: string[];
+  entry_points?: string[];
+  population?: string;
+  religions?: string;
 }
 
 export interface Mission {
