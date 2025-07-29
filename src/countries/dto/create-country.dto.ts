@@ -2,7 +2,7 @@ import {
   IsString,
   IsNumber,
   IsArray,
-  IsOptional,
+  //IsOptional,
   IsUrl,
   ValidateNested,
 } from 'class-validator';
@@ -20,6 +20,10 @@ export class GeopointDto {
 }
 
 export class CreateCountryDto {
+  @ApiProperty({ example: '1' })
+  @IsString()
+  id: string;
+
   @ApiProperty({ example: 'Chile' })
   @IsString()
   name: string;
@@ -38,10 +42,10 @@ export class CreateCountryDto {
     example: 'https://example.com/chile-coat.png',
     required: false,
   })
-  @IsOptional()
+  //@IsOptional()
   @IsString()
   @IsUrl()
-  coat_of_arms?: string;
+  coat_of_arms: string;
 
   @ApiProperty({ example: 'Santiago' })
   @IsString()
@@ -60,77 +64,78 @@ export class CreateCountryDto {
     example: 'https://example.com/chile-physical.jpg',
     required: false,
   })
-  @IsOptional()
+  //@IsOptional()
   @IsString()
   @IsUrl()
-  physical_map?: string;
+  physical_map: string;
 
   @ApiProperty({
     example: 'https://example.com/chile-political.jpg',
     required: false,
   })
-  @IsOptional()
+  //@IsOptional()
   @IsString()
   @IsUrl()
-  political_map?: string;
+  political_map: string;
 
   @ApiProperty({ example: 'Presidential Republic', required: false })
-  @IsOptional()
+  //@IsOptional()
   @IsString()
-  government?: string;
+  government: string;
 
   @ApiProperty({ example: 'Principal industries', required: false })
-  @IsOptional()
+  //@IsOptional()
   @IsString()
-  economy?: string;
+  economy: string;
 
   @ApiProperty({ example: '7561024', required: false })
-  @IsOptional()
+  //@IsOptional()
   @IsNumber()
-  area?: number;
+  area: number;
 
   @ApiProperty({ example: 'Santiago, Valparaíso, Concepción', required: false })
-  @IsOptional()
-  @IsString()
-  principal_cities?: string;
+  //@IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  principal_cities: string[];
 
   @ApiProperty({
     type: [String],
     example: ['Andes Mountains'],
     required: false,
   })
-  @IsOptional()
+  //@IsOptional()
   @IsArray()
   @IsString({ each: true })
-  hills?: string[];
+  hills: string[];
 
   @ApiProperty({
     type: [String],
     example: ['Villarrica', 'Osorno'],
     required: false,
   })
-  @IsOptional()
+  //@IsOptional()
   @IsArray()
   @IsString({ each: true })
-  volcanoes?: string[];
+  volcanoes: string[];
 
   @ApiProperty({
     type: [String],
     example: ['Aeropuerto Internacional Arturo Merino Benítez'],
     required: false,
   })
-  @IsOptional()
+  //@IsOptional()
   @IsArray()
   @IsString({ each: true })
-  entry_points?: string[];
+  entry_points: string[];
 
   @ApiProperty({ example: '19116201 (Año)', required: false })
-  @IsOptional()
+  //@IsOptional()
   @IsString()
-  population?: string;
+  population: string;
 
   @ApiProperty({ example: 'Roman Catholicism, Protestantism', required: false })
-  @IsOptional()
+  //@IsOptional()
   @IsString()
-  religions?: string;
+  religions: string;
 }

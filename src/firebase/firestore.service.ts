@@ -2,6 +2,8 @@ import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as admin from 'firebase-admin';
 
+import { Country } from '../types/interfaces';
+
 interface FirestoreFilter {
   field: string;
   operator: FirebaseFirestore.WhereFilterOp;
@@ -35,6 +37,24 @@ export class FirestoreService {
     } catch (error) {
       throw new Error(`Error creating document: ${error.message}`);
     }
+  }
+
+  async createWithId(
+    collection: string,
+    id: string | number,
+    data: any,
+  ): Promise<Country> {
+    await this.db
+      .collection(collection)
+      .doc(String(id))
+      .set({
+        ...data,
+      });
+    const doc = await this.db.collection(collection).doc(String(id)).get();
+    return {
+      id: doc.id,
+      ...(doc.data() as Omit<Country, 'id'>),
+    };
   }
 
   async findAll(

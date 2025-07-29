@@ -18,7 +18,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  app.setGlobalPrefix('api'); // Prefijo global para las rutas
+  app.setGlobalPrefix('api');
 
   // Configurar CORS si es necesario
   app.enableCors();

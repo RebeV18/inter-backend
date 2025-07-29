@@ -7,21 +7,27 @@ import { CreateCountryDto } from './dto/create-country.dto';
 import { UpdateCountryDto } from './dto/update-country.dto';
 import { FirestoreService } from '../firebase/firestore.service';
 
+import { Country } from '../types/interfaces';
+
 @Injectable()
 export class CountriesService {
   private readonly collection = 'countries';
 
   constructor(private readonly firestoreService: FirestoreService) {}
 
-  async create(createCountryDto: CreateCountryDto) {
+  async create(
+    createCountryDto: CreateCountryDto,
+  ): Promise<{ message: string; data: Country }> {
     try {
-      const country = await this.firestoreService.create(
+      const { id, ...data } = createCountryDto;
+      const countryDoc = await this.firestoreService.createWithId(
         this.collection,
-        createCountryDto,
+        String(id),
+        data,
       );
       return {
         message: 'Country created successfully',
-        data: country,
+        data: countryDoc,
       };
     } catch (error) {
       throw new Error(`Failed to create country: ${error.message}`);

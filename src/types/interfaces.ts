@@ -11,6 +11,7 @@ export interface Topic {
 }
 
 export interface Country {
+  id: string;
   name: string;
   continents: string[];
   flags: string[];
@@ -18,16 +19,17 @@ export interface Country {
   capital: string;
   geopoint: { latitude: number; longitude: number };
   geographical_division: string;
-  physical_map?: string;
-  political_map?: string;
-  government?: string;
-  area?: number;
-  principal_cities?: string;
-  hills?: string[];
-  volcanoes?: string[];
-  entry_points?: string[];
-  population?: string;
-  religions?: string;
+  physical_map: string;
+  political_map: string;
+  government: string;
+  economy: string;
+  area: number;
+  principal_cities: string[];
+  hills: string[];
+  volcanoes: string[];
+  entry_points: string[];
+  population: string;
+  religions: string;
 }
 
 export interface Mission {
